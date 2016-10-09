@@ -4,35 +4,55 @@ import numpy as np
 import math
 
 # prevedeni obrazku na cernobily, 2D pole
-def grayScale(img):
+def greyScale(img):
     v, s, t = img.shape
+    '''
     grayPicture = np.zeros((v, s), dtype=np.uint8)
     for row in range(0, v):
         for column in range(0, s):
             grayPicture[row][column] = sum(img[row][column]) / 3
-    return grayPicture
-
+    '''
+    greyPicture = [[[sum(img[row][column]) / 3] for column in range(v)] for row in range(s)]
+    return greyPicture
 
 # ulozeni obrazku do 3D pole
-def grayTriColor(grayPicture):
-    v, s = grayPicture.shape
+def greyTriColor(greyPicture):
+    v, s = greyPicture.shape
+    '''
     img = np.zeros((v, s, 3), dtype=np.uint8)
     for row in range(0, v):
         for column in range(0, s):
             img[row][column][0] = grayPicture[row][column]
             img[row][column][1] = grayPicture[row][column]
             img[row][column][2] = grayPicture[row][column]
+    '''
+    img = [[[
+        greyPicture[row][column],
+        greyPicture[row][column],
+        greyPicture[row][column]
+        ] for column in range(s)
+        ] for row in range(v)
+        ]
     return img
 
 
-def grayTriColorFloat(grayPicture):
-    v, s = grayPicture.shape
+def greyTriColorFloat(greyPicture):
+    v, s = greyPicture.shape
+    '''
     img = np.zeros((v, s, 3), dtype=np.float)
     for row in range(0, v):
         for column in range(0, s):
             img[row][column][0] = grayPicture[row][column]
             img[row][column][1] = grayPicture[row][column]
             img[row][column][2] = grayPicture[row][column]
+    '''
+    img = [[[
+        greyPicture[row][column],
+        greyPicture[row][column],
+        greyPicture[row][column]
+        ] for column in range(s)
+        ] for row in range(v)
+        ]
     return img
 
 
@@ -66,7 +86,8 @@ def glue(*images):
         if maxHight < h:
             maxHight = h
 
-    newPicture = np.zeros((maxHight, sumWidth, 3), dtype=np.uint8)
+    # newPicture = np.zeros((maxHight, sumWidth, 3), dtype=np.uint8)
+    newPicture = [[[0][0][0] for column in range(sumWidth)] for row in range(maxHight)]
     # print "h", maxHight, "w", sumWidth
     actualEnd = 0
     actualBegin = 0
@@ -87,6 +108,7 @@ def anisotropie(img, lambdaValue=0.1, sigma=0.015):
 
     # newPicture = img
     #newPicture = np.zeros((h, w))
+    # Proc musim pokazde udelat kopii obrazku ???
     newPicture = img.copy()
 
     #print newPicture.dtype
@@ -140,23 +162,25 @@ def main():
     obrazek = misc.imread('lena.png')
     #print type(obrazek)
 
-    grayPicture = grayScale(obrazek)
-    #aniPicture = anisotropie(grayPicture)
-    #aniPicture = grayPicture / 255.0
-    aniPicture = grayPicture.copy() / 255.0
-    print aniPicture[10][10]
+    greyPicture = greyScale(obrazek)
+    # aniPicture = anisotropie(greyPicture)
+    # aniPicture = greyPicture / 255.0
+
+    #
+    aniPicture = greyPicture.copy() / 255.0
+    # print aniPicture[10][10]
     for i in range(0, 50):
         aniPicture = anisotropie(aniPicture)
         print i
-    #print aniPicture[10][10]
+    # print aniPicture[10][10]
 
-    triGray = grayTriColor(grayPicture)
+    triGrey = greyTriColor(greyPicture)
     aniPicture *= 255
-    triPicture = grayTriColorFloat(aniPicture)
-    #triPicture *= 255
-    #print triPicture[10][10]
+    triPicture = greyTriColorFloat(aniPicture)
+    # triPicture *= 255
+    # print triPicture[10][10]
 
-    allPictures = glue(obrazek, triGray, triPicture)
+    allPictures = glue(obrazek, triGrey, triPicture)
 
     plt.imsave("output7.png", allPictures)
     plt.imshow(allPictures)
