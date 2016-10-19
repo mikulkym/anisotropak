@@ -1,5 +1,6 @@
 import math
 import copy
+import time
 from PIL import Image
 
 
@@ -28,8 +29,6 @@ def anisotropie(img, shape, lambdaValue=0.1, sigma=0.015):
     h, w = shape
 
     newPicture = copy.copy(img)
-
-    #print newPicture.dtype
 
     for row in range(1, h - 1):
         for column in range(1, w - 1):
@@ -67,7 +66,7 @@ def showPicture(picture, shape):
 
 
 def main():
-    img = Image.open('lena.png')
+    img = Image.open('../lena.png')
     shape = img.size
     obrazek = img.getdata()
 
@@ -80,9 +79,13 @@ def main():
     # generator dela rovnou nove pole. takze kopie
     aniPicture = [greyPicture[i] / 255.0 for i in range(h * w)]
 
+    start = time.time()
     for i in range(0, 10):
         aniPicture = anisotropie(aniPicture, shape)
         print i
+    end = time.time()
+    anisotropic_time = end - start
+    print 'Anisotropic filtration time {0}'.format(anisotropic_time)
 
     aniPicture = [int(aniPicture[i] * 255.0) for i in range(h * w)]
     showPicture(aniPicture, shape)
