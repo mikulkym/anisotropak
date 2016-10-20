@@ -4,29 +4,31 @@ import time
 from PIL import Image
 
 
-def greyScale(img, shape):
+def greyScale(img, int h, int w):
     """
     prevedeni obrazku na cernobily
-    :param img: barevny obrazek, 1D pole tuplu [(R,G,B), (R,G.B), ....]
-    :param shape: rozmer obrazku
-    :return: cernobily obrazek, pole
+    :param img: color picture, 1D array of tuples [(R,G,B), (R,G.B), ....]
+    :param h: height of picture
+    :param w: width of picture
+    :return: black and white picture, array
     """
-    s, v = shape
-    greyPicture = [sum(img[i]) / 3 for i in range(v * s)]
+    # s, v = shape
+    greyPicture = [sum(img[i]) / 3 for i in range(h * w)]
 
     return greyPicture
 
 
-def anisotropie(img, shape, lambdaValue=0.1, sigma=0.015):
+def anisotropie(img, int h, int w, float lambdaValue=0.1, float sigma=0.015):
     """
-
-    :param img:
-    :param shape: rozmer obrazku
+    Anisotropic filtering (AF), a method of enhancing the image quality of textures
+    :param img: greyScale image
+    :param h: height of picture
+    :param w: width of picture
     :param lambdaValue:
     :param sigma:
-    :return:
+    :return: filtered picture
     """
-    h, w = shape
+    # h, w = shape
 
     newPicture = copy.copy(img)
 
@@ -55,9 +57,16 @@ def anisotropie(img, shape, lambdaValue=0.1, sigma=0.015):
     return newPicture
 
 
-def showPicture(picture, shape):
-    img = Image.new('L', shape)
-    h, w = shape
+cdef void showPicture(picture, int h, int w):
+    """
+    Displays a picture
+    :param picture: picture to display
+    :param h: height of picture
+    :param w: width of picture
+    """
+
+    img = Image.new('L', h, w)
+    # h, w = shape
     for x in range(w):
         for y in range(h):
             img.putpixel((x, y), picture[x*w +y])
@@ -73,22 +82,22 @@ def main():
     img.show()
     h, w = shape
 
-    greyPicture = greyScale(obrazek, shape)
-    showPicture(greyPicture, shape)
+    greyPicture = greyScale(obrazek, h, w)
+    showPicture(greyPicture, h, w)
 
     # generator dela rovnou nove pole. takze kopie
     aniPicture = [greyPicture[i] / 255.0 for i in range(h * w)]
 
     start = time.time()
     for i in range(0, 10):
-        aniPicture = anisotropie(aniPicture, shape)
+        aniPicture = anisotropie(aniPicture, h, w)
         print i
     end = time.time()
     anisotropic_time = end - start
     print 'Anisotropic filtration time {0}'.format(anisotropic_time)
 
     aniPicture = [int(aniPicture[i] * 255.0) for i in range(h * w)]
-    showPicture(aniPicture, shape)
+    showPicture(aniPicture, h, w)
 
 
 if __name__ == "__main__":
