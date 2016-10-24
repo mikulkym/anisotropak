@@ -1,15 +1,12 @@
 #cython: boundscheck=False, wraparound=False, nonecheck=False, cdivision=True
-# import math
-import copy
+
 import time
 from PIL import Image
 from libc.math cimport exp as c_exp
 from cpython cimport array
 
-#template pole
+# template pole
 cdef array.array float_array_template = array.array('f', [])
-cdef array.array int_array_template = array.array('i', [])
-
 
 def greyScale(img, int h, int w):
     """
@@ -17,10 +14,10 @@ def greyScale(img, int h, int w):
     :param img: color picture, 1D array of tuples [(R,G,B), (R,G.B), ....]
     :param h: height of picture
     :param w: width of picture
-    :return: black and white picture, array
+    :return: black and white picture, array [x, x, ...]
     """
-    # s, v = shape
-    greyPicture = [sum(img[i]) / 3 for i in range(h * w)]
+
+    greyPicture = [sum(img[i]) / 3 for i in range(h*w)]
 
     return greyPicture
 
@@ -38,10 +35,10 @@ def anisotropie(float[:] img, int h, int w, float lambdaValue=0.1, float sigma=0
 
     cdef float north = 0.0, south = 0.0, west = 0.0, east = 0.0, actual = 0.0
     cdef float northGradient = 0.0, southGradient = 0.0, westGradient = 0.0, eastGradient = 0.0
-    cdef float cN, cS, cW, cE
-    cdef int nt
+    cdef float cN = 0.0, cS = 0.0, cW = 0.0, cE = 0.0
+    cdef int nt = 0
     cdef int N = h - 2, M = w - 2
-    cdef int column, row, r, c
+    cdef int column = 0, row = 0, r = 0, c = 0
 
     # vytvarim pole
     cdef array.array newPic = array.clone(float_array_template, (h * w), zero=False)
@@ -85,7 +82,9 @@ cdef void showPicture(picture, int h, int w):
     """
 
     img = Image.new('L', (h, w))
-    # h, w = shape
+
+    cdef int x = 0, y = 0
+
     for x in range(w):
         for y in range(h):
             img.putpixel((x, y), picture[x*w +y])
@@ -95,12 +94,12 @@ cdef void showPicture(picture, int h, int w):
 
 def main(int count=10):
     img = Image.open('../lena.png')
-    shape = img.size
-    obrazek = img.getdata()
-
     img.show()
-    h, w = shape
 
+    cdef int h = img.size[0]
+    cdef int w = img.size[1]
+
+    obrazek = img.getdata()
     greyPicture = greyScale(obrazek, h, w)
     showPicture(greyPicture, h, w)
 
@@ -110,15 +109,19 @@ def main(int count=10):
     cdef float[:] aniPicture = aniPictureArr
 
     start = time.time()
+
     for i in range(count):
         aniPicture = anisotropie(aniPicture, h, w)
         # print i
+
     end = time.time()
     anisotropic_time = end - start
+
     print 'Anisotropic filtration time {0}'.format(anisotropic_time)
 
     aniPictureNormal = [int(aniPicture[i] * 255.0) for i in range(h * w)]
     showPicture(aniPictureNormal, h, w)
+
     # Anisotropic filtration time 0.164086103439
 
 

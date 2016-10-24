@@ -9,7 +9,7 @@ def greyScale(img, shape):
     prevedeni obrazku na cernobily
     :param img: barevny obrazek, 1D pole tuplu [(R,G,B), (R,G.B), ....]
     :param shape: rozmer obrazku
-    :return: cernobily obrazek, pole
+    :return: cernobily obrazek, pole [x, x, ...]
     """
     s, v = shape
     greyPicture = [sum(img[i]) / 3 for i in range(v * s)]

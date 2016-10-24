@@ -1,1 +1,15 @@
-misto shape dva param
+teoreticky vsechno
+
+
+if __name__ == "__main__":
+    main()
+===>>>
+Like other programming languages, Python too has an execution entry point i.e. main. When you execute a Python script,
+it is treated as the main and its __name__ attribute is set to "__main__". If you import this script as a module in
+another script, the __name__ is set to the name of the script/module.
+
+With this behavior any py file can exhibit dual behavior - it is a script as well as module. As a programmer,
+you can conditionally execute code based on whether it is being run as a script or is being imported as a module.
+
+A very common use of this is to put test code of your script inside the if condition that you mentioned,
+while allowing others to use it as a module and not impacting their usage of the module.
