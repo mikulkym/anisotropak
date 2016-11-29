@@ -19,12 +19,12 @@ def greyScale(img, shape):
 
 def anisotropie(img, shape, lambdaValue=0.1, sigma=0.015):
     """
-
+     anisotropic filtering of image
     :param img:
     :param shape: rozmer obrazku
-    :param lambdaValue:
-    :param sigma:
-    :return:
+    :param lambdaValue: konstanta
+    :param sigma: konstanta
+    :return: filtered image
     """
     h, w = shape
 
